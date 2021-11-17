@@ -15,6 +15,6 @@ docker-build:
   - docker login -u _ -p $HEROKU_TOKEN registry.heroku.com
   - docker push registry.heroku.com/tecevento-api/tecevento
   - apk add --no-cache curl
-  - echo "Docker Image ID is $(cat imageid.txt)"
+  - echo "Docker Image ID is tecevento"
   - |-
     curl -X PATCH https://tecevento-api.herokuapp.com/WeatherForecast --header "Content-Type: application/json" --header "Accept: application/vnd.heroku+json; version=3.docker-releases" --header "Authorization: Bearer ${HEROKU_TOKEN}" --data '{ "updates": [ { "type": "web", "docker_image": "Teste" } ] }'
