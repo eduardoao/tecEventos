@@ -14,7 +14,7 @@ docker-build:
   - docker build -t registry.heroku.com/tecevento-api/tecevento .
   #- docker login -u _ -p $HEROKU_TOKEN registry.heroku.com
   #- docker login --username=_ --password=$(heroku auth:$HEROKU_TOKEN) registry.heroku.com
-  - docker login --username=eoalcantara@gmail.com --password=$HEROKU_TOKEN registry.heroku.com
+  - docker login -u eoalcantara@gmail.com -p ClearCode2021 registry.heroku.com
   - docker push registry.heroku.com/tecevento-api/tecevento
   - apk add --no-cache curl
   - echo "Docker Image ID is tecevento"
