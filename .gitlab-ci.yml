@@ -13,7 +13,7 @@ deploy-master:
   stage: master
   script:
     - docker run -t -v $PWD:/app --workdir /app mcr.microsoft.com/dotnet/sdk:5.0 bash -c "dotnet restore && dotnet publish -c Release -o ./bin/Release/PublishOutput"
-    - docker build -t $CI_REGISTRY/tecevento-api/web .
+    - docker build -t $CI_REGISTRY/tecevento-api/API/web .
     - docker push $CI_REGISTRY/tecevento-api/web   
     - heroku container:release web --app tecevento-api
   only:
