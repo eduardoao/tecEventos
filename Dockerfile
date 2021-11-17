@@ -6,7 +6,7 @@ ENV ASPNETCORE_URLS=http://+:5000
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
-COPY ["tecEvento.csproj", "./"]
+COPY ["API/tecEvento.csproj", "./"]
 RUN dotnet restore "tecEvento.csproj"
 COPY . .
 WORKDIR "/src/."
