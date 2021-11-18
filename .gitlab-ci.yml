@@ -12,12 +12,11 @@ stages:
 docker-build:
   stage: build
    # Build Docker image
-  script: 
-    #- apt-get update -qy    
-    - gem install dpl
-    - dpl --provider=heroku --app=tecevento-api App --api-key=$HEROKU_API_KEY # security add the heroku api to CI/CD setting
-
+  script:    
+    
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     # Push the Docker image to Heroku Container Registry
-    - heroku container:push web -a tecevento-api
-    - heroku container:release web -a tecevento-api
+    - docker build -t registry.heroku.com/tecevento-api/tecevento . 
+    - docker push registry.heroku.com/tecevento-api
+    #- heroku container:push web -a tecevento-api
+    #- heroku container:release web -a tecevento-api
