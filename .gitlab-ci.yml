@@ -23,5 +23,6 @@ docker-build:
     # Push the Docker image to Heroku Container Registry
     #- docker build -t registry.heroku.com/tecevento-api/web . 
     #- docker push registry.heroku.com/tecevento-api/web
+    - heroku container:login
     - heroku container:push web -a tecevento-api
     - heroku container:release web -a tecevento-api
