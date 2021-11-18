@@ -12,11 +12,13 @@ stages:
 docker-build:
   stage: build
    # Build Docker image
+  
   script:
     - apk update && apk add nodejs
     - apk add --update npm
     - npm i -g heroku        
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    #- docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY    
+    - echo $CI_REGISTRY_PASSWORD | docker login --username $CI_REGISTRY_USER --password-stdin
     # Push the Docker image to Heroku Container Registry
     #- docker build -t registry.heroku.com/tecevento-api/web . 
     #- docker push registry.heroku.com/tecevento-api/web
