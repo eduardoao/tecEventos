@@ -1,22 +1,33 @@
-image: docker:latest
-services:
-  - docker:dind
+name: tecevento CD
 
-variables:
-  DOCKER_DRIVER: overlay
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+    
+#set environment variables 
+env:
+  HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+  APP_NAME: ${{ 'tecevento-api' }}
 
-stages:
-  - build
-  
-docker-build:
-  stage: build
-  script:
-  - docker build -t registry.heroku.com/tecevento-api/tecevento .
-  #- docker login -u _ -p $HEROKU_TOKEN registry.heroku.com
-  #- docker login --username=_ --password=$(heroku auth:$HEROKU_TOKEN) registry.heroku.com
-  #- docker login -u eoalcantara@gmail.com -p ClearCode2021 registry.heroku.com
-  - docker login --username=_ --password=$(heroku auth:$HEROKU_TOKEN) registry.heroku.com
-  - docker push registry.heroku.com/tecevento-api/tecevento
-  - apk add --no-cache curl
-  - echo "Docker Image ID is tecevento"
-  
+jobs:
+      
+  deploy:
+    name: Deploy to Heroku
+    runs-on: ubuntu-18.04
+    steps:
+
+    # Clone the repository
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    # Build Docker image
+    - name: Docker build
+      run: docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+
+    # Push the Docker image to Heroku Container Registry
+    - name: Publish
+      run: |
+        heroku container:push web -a $APP_NAME
+        heroku container:release web -a $APP_NAME
