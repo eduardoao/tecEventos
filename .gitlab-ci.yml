@@ -18,7 +18,7 @@ docker-build:
     - npm i -g heroku        
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     # Push the Docker image to Heroku Container Registry
-    - docker build -t registry.heroku.com/tecevento-api/web . 
-    - docker push registry.heroku.com/tecevento-api/web
-    #- heroku container:push web -a tecevento-api
+    #- docker build -t registry.heroku.com/tecevento-api/web . 
+    #- docker push registry.heroku.com/tecevento-api/web
+    - heroku container:push web -a tecevento-api
     - heroku container:release web -a tecevento-api
