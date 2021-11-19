@@ -32,7 +32,7 @@ dockerize:
     # Push to Gitlab
     - docker push $CONTAINER_GITLAB:$CONTAINER_TAG
   only:
-    - Teste-CICD
+    - master
 
 # At this point, you could go to your repo "Registry" page on Gitlab and see your image
 
@@ -62,4 +62,4 @@ deploy_to_heroku:
     # Push it to Heroku
     - docker push $CONTAINER_HEROKU
   only:
-    - Teste-CICD
+    - master
