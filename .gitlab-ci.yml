@@ -5,7 +5,7 @@ services:
 variables:
   DOCKER_DRIVER: overlay
   # You can find this on your Gitlab repo page, under "Registry"
-  CONTAINER_GITLAB: registry.gitlab.com/eoalcantara/tecEventos
+  CONTAINER_GITLAB: registry.gitlab.com/eoalcantara/teceventos
   # It's just a tag, use whatever you want : back, front, test, staging...
   CONTAINER_TAG: api
   # Change with the name of your Heroku app
@@ -32,7 +32,7 @@ dockerize:
     # Push to Gitlab
     - docker push $CONTAINER_GITLAB:$CONTAINER_TAG
   only:
-    - master
+    - Teste-CICD
 
 # At this point, you could go to your repo "Registry" page on Gitlab and see your image
 
@@ -46,7 +46,8 @@ deploy_to_heroku:
   - docker:dind
   script:
     # Login to Heroku's registry
-    - docker login --username=$HEROKU_USER --password=$HEROKU_API_KEY registry.heroku.com
+    #- docker login --username=$HEROKU_USER --password=$HEROKU_API_KEY registry.heroku.com
+    - echo $HEROKU_API_KEY | docker login --username $HEROKU_USER --password-stdin registry.heroku.com
     # Gets your Gitlab image
     - docker pull $CONTAINER_GITLAB:$CONTAINER_TAG
     # Make it good looking for Heroku
@@ -54,4 +55,4 @@ deploy_to_heroku:
     # Push it to Heroku
     - docker push $CONTAINER_HEROKU
   only:
-    - master
+    - Teste-CICD
