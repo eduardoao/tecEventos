@@ -32,7 +32,7 @@ dockerize:
     # Push to Gitlab
     - docker push $CONTAINER_GITLAB:$CONTAINER_TAG
   only:
-    - master
+    - Teste-CICD
 
 # At this point, you could go to your repo "Registry" page on Gitlab and see your image
 
@@ -41,7 +41,7 @@ deploy_to_heroku:
   # On Your CI/CD page on Gitlab, under "Environment", you can add new ones with informations like these and get informations about this deploy task
   environment:
     name: staging
-    url: https://<HEROKU APP NAME>.herokuapp.com/
+    url: https://tecevento-api.herokuapp.com/
   services:
   - docker:dind
   script:
@@ -54,4 +54,4 @@ deploy_to_heroku:
     # Push it to Heroku
     - docker push $CONTAINER_HEROKU
   only:
-    - master
+    - Teste-CICD
