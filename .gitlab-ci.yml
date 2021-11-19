@@ -45,9 +45,15 @@ deploy_to_heroku:
   services:
   - docker:dind
   script:
+    #Install heroku
+    - apk update && apk add nodejs
+    - apk add --update npm
+    - npm i -g heroku 
+
     # Login to Heroku's registry
+    - docker login --username=_ --password=$(heroku auth:token) registry.heroku.com
     #- docker login --username=$HEROKU_USER --password=$HEROKU_API_KEY registry.heroku.com
-    - echo $HEROKU_API_KEY | docker login --username $HEROKU_USER --password-stdin registry.heroku.com
+    #- echo $HEROKU_API_KEY | docker login --username $HEROKU_USER --password-stdin registry.heroku.com
     # Gets your Gitlab image
     - docker pull $CONTAINER_GITLAB:$CONTAINER_TAG
     # Make it good looking for Heroku
