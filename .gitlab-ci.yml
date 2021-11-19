@@ -1,31 +1,57 @@
-  
-  
-image: docker:latest
+image: docker:git
 services:
   - docker:dind
 
 variables:
   DOCKER_DRIVER: overlay
+  # You can find this on your Gitlab repo page, under "Registry"
+  CONTAINER_GITLAB: registry.gitlab.com/eoalcantara/tecEventos
+  # It's just a tag, use whatever you want : back, front, test, staging...
+  CONTAINER_TAG: api
+  # Change with the name of your Heroku app
+  CONTAINER_HEROKU: registry.heroku.com/tecevento-api/web
+  # Can be found on: https://dashboard.heroku.com/account under "API Key"
+  HEROKU_API_KEY: $HEROKU_API_KEY
+  # Heroku User name for login: usually an e-mail address
+  HEROKU_USER: $CI_REGISTRY_USER
 
+# Order of tasks
 stages:
-  - build
+  - dockerize
+  - deploy
   
-docker-build:
-  stage: build
-   # Build Docker image
-  
+# Register in your gitlab registry. The environment variables are set automatically, don't change anything.
+before_script:
+  - docker login -u gitlab-ci-token -p "$CI_BUILD_TOKEN" "$CI_REGISTRY"
+
+dockerize:
+  stage: dockerize
   script:
-    - apk update && apk add nodejs
-    - apk add --update npm
-    - npm i -g heroku        
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY    
-    #- echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
-    #- docker login -u gitlab-ci-token -p "$CI_BUILD_TOKEN" "$CI_REGISTRY"
-    #- echo $HEROKU_API_KEY | docker login --username $CI_REGISTRY_USER --password-stdin $CI_REGISTRY    
-    # Push the Docker image to Heroku Container Registry
-    #- docker login --username=$CI_REGISTRY_USER --password=$HEROKU_API_KEY registry.heroku.com
-    - docker build -t registry.heroku.com/tecevento-api/web . 
-    - docker push registry.heroku.com/tecevento-api/web
-    #- heroku container:login
-    - heroku container:push web -a tecevento-api
-    - heroku container:release web -a tecevento-api
+    # Make an image from the current folder and tag it with the registry name and tag you defined
+    - docker build -t $CONTAINER_GITLAB:$CONTAINER_TAG .
+    # Push to Gitlab
+    - docker push $CONTAINER_GITLAB:$CONTAINER_TAG
+  only:
+    - Teste-CICD
+
+# At this point, you could go to your repo "Registry" page on Gitlab and see your image
+
+deploy_to_heroku:
+  stage: deploy
+  # On Your CI/CD page on Gitlab, under "Environment", you can add new ones with informations like these and get informations about this deploy task
+  environment:
+    name: staging
+    url: https://tecevento-api.herokuapp.com/
+  services:
+  - docker:dind
+  script:
+    # Login to Heroku's registry
+    - docker login --username=$HEROKU_USER --password=$HEROKU_API_KEY registry.heroku.com
+    # Gets your Gitlab image
+    - docker pull $CONTAINER_GITLAB:$CONTAINER_TAG
+    # Make it good looking for Heroku
+    - docker tag $CONTAINER_GITLAB:$CONTAINER_TAG $CONTAINER_HEROKU
+    # Push it to Heroku
+    - docker push $CONTAINER_HEROKU
+  only:
+    - Teste-CICD
